@@ -1,10 +1,14 @@
 import json
+from pathlib import Path
+
 import yaml
 
-with open("controls/controls.yaml") as f:
+PROJECT_ROOT = Path(__file__).resolve().parent
+
+with (PROJECT_ROOT / "controls" / "controls.yaml").open() as f:
     controls = yaml.safe_load(f)["controls"]
 
-with open("data/mock_aws_config.json") as f:
+with (PROJECT_ROOT / "data" / "mock_aws_config.json").open() as f:
     config = json.load(f)
 
 print(f"Loaded {len(controls)} controls")
