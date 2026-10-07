@@ -1,4 +1,4 @@
-# GRC Config Checker
+# GRC Compliance-as-Code Configuration Checker
 
 A compliance-as-code tool that tests cloud configurations against
 CIS Benchmark-style controls mapped to NIST 800-53, producing
@@ -46,8 +46,8 @@ Full mapping: [docs/control_mapping.md](docs/control_mapping.md)
 
 ## Quick Start
 ```bash
-git clone https://github.com/<your-username>/grc-config-checker.git
-cd grc-config-checker
+git clone https://github.com/BenaDippolito>/GRC projects/
+cd Project 1
 python -m venv .venv
 source .venv/bin/activate      # Windows: .venv\Scripts\activate
 pip install -r requirements-dev.txt
