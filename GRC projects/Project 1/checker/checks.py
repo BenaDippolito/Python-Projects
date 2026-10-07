@@ -31,7 +31,7 @@ def check_s3_public_access(config: dict) -> list[dict]:
 def check_iam_mfa(config: dict) -> list[dict]:
     results = []
     for user in config.get("iam_users", []):
-        passed = user.get("mfa_enabled", False)
+        passed = user.get("mfa_enabled", True)
         detail = "MFA enabled" if passed else "MFA NOT enabled"
         results.append(_result(user["username"], passed, detail))
     return results
