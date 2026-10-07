@@ -1,0 +1,20 @@
+{
+  "s3_buckets": [
+    {"name": "finance-reports", "encrypted": true, "public_access_blocked": true},
+    {"name": "marketing-assets", "encrypted": false, "public_access_blocked": false},
+    {"name": "customer-backups", "encrypted": true, "public_access_blocked": false}
+  ],
+  "iam_users": [
+    {"username": "alice", "mfa_enabled": true},
+    {"username": "bob", "mfa_enabled": false},
+    {"username": "svc-deploy", "mfa_enabled": false}
+  ],
+  "security_groups": [
+    {"id": "sg-001", "name": "web-sg", "ingress": [{"port": 443, "cidr": "0.0.0.0/0"}]},
+    {"id": "sg-002", "name": "admin-sg", "ingress": [{"port": 22, "cidr": "0.0.0.0/0"}]}
+  ],
+  "cloudtrails": [
+    {"name": "main-trail", "is_logging": true},
+    {"name": "legacy-trail", "is_logging": false}
+  ]
+}
