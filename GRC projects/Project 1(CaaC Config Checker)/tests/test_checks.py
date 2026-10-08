@@ -88,10 +88,6 @@ def test_no_ingress_rules_passes():
     assert check_sg_ssh_open(make_sg())[0]["passed"] is True
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="Known gap: IPv6 '::/0' is not detected yet. Fix in a future version.",
-)
 def test_ssh_open_to_ipv6_internet_should_fail():
     # This documents the known IPv6 detection gap.
     config = make_sg({"port": 22, "cidr": "::/0"})
