@@ -1,9 +1,11 @@
+# Standard-library helpers for producing structured JSON and tabular CSV output.
 import csv
 import json
 from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 
+# Column order is kept stable so exported CSV files are predictable for auditors.
 CSV_COLUMNS = [
     "control_id", "title", "severity", "nist_80053", "cis_ref",
     "status", "resource", "detail",
@@ -12,6 +14,7 @@ CSV_COLUMNS = [
 
 def build_report(results: list[dict], source: str) -> dict:
     """Wrap raw results with metadata and a summary."""
+    # Count statuses once and reuse the totals in the report summary.
     counts = Counter(r["status"] for r in results)
     return {
         "metadata": {
@@ -31,6 +34,7 @@ def build_report(results: list[dict], source: str) -> dict:
 
 
 def write_json(report: dict, path: Path) -> Path:
+    # Ensure the output directory exists before serializing the report.
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
         json.dump(report, f, indent=2)
@@ -45,6 +49,7 @@ def _safe(value) -> str:
 
 def write_csv(results: list[dict], path: Path) -> Path:
     """One row per failing resource; one row for controls with no failures."""
+    # Flatten each control into audit-friendly resource rows.
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=CSV_COLUMNS)
@@ -59,6 +64,7 @@ def write_csv(results: list[dict], path: Path) -> Path:
                 "status": r["status"],
             }
             if r["failures"]:
+                # Emit one row for every failing resource to preserve evidence.
                 for failure in r["failures"]:
                     writer.writerow({
                         **base,
@@ -66,10 +72,12 @@ def write_csv(results: list[dict], path: Path) -> Path:
                         "detail": _safe(failure["detail"]),
                     })
             else:
+                # Controls without failures still receive a row for traceability.
                 writer.writerow({**base, "resource": "", "detail": _safe(r["error"] or "")})
     return path
 
 
 def timestamped_name(prefix: str, extension: str) -> str:
+    # Use UTC in filenames so reports remain sortable and timezone-independent.
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     return f"{prefix}_{stamp}.{extension}"

@@ -1,4 +1,6 @@
+# Source-of-truth control definitions used by the compliance engine.
 controls:
+  # Storage encryption control.
   - id: GRC-001
     title: S3 buckets must have encryption at rest enabled
     description: Data stored in S3 should be encrypted to protect confidentiality.
@@ -7,6 +9,7 @@ controls:
     severity: high
     check: check_s3_encryption
 
+  # Storage public-access control.
   - id: GRC-002
     title: S3 buckets must block public access
     description: Buckets must not be publicly accessible.
@@ -15,6 +18,7 @@ controls:
     severity: critical
     check: check_s3_public_access
 
+  # Identity multi-factor authentication control.
   - id: GRC-003
     title: All IAM users must have MFA enabled
     description: Multi-factor authentication reduces account takeover risk.
@@ -23,6 +27,7 @@ controls:
     severity: high
     check: check_iam_mfa
 
+  # Network exposure control for SSH.
   - id: GRC-004
     title: Security groups must not allow SSH from the internet
     description: Port 22 must not be open to 0.0.0.0/0.
@@ -31,6 +36,7 @@ controls:
     severity: critical
     check: check_sg_ssh_open
 
+  # Audit logging control.
   - id: GRC-005
     title: CloudTrail logging must be enabled
     description: Audit logs must be captured to support accountability.

@@ -6,11 +6,13 @@ resources failed, not just that "something" failed.
 """
 
 
+# Build the common result shape returned by every resource-level check.
 def _result(resource: str, passed: bool, detail: str) -> dict:
     return {"resource": resource, "passed": passed, "detail": detail}
 
 
 def check_s3_encryption(config: dict) -> list[dict]:
+    # Evaluate encryption at rest for each S3 bucket; missing evidence fails closed.
     results = []
     for bucket in config.get("s3_buckets", []):
         passed = bucket.get("encrypted", False)
@@ -20,6 +22,7 @@ def check_s3_encryption(config: dict) -> list[dict]:
 
 
 def check_s3_public_access(config: dict) -> list[dict]:
+    # Confirm that every S3 bucket has its public-access block enabled.
     results = []
     for bucket in config.get("s3_buckets", []):
         passed = bucket.get("public_access_blocked", False)
@@ -29,6 +32,7 @@ def check_s3_public_access(config: dict) -> list[dict]:
 
 
 def check_iam_mfa(config: dict) -> list[dict]:
+    # Verify that each IAM user has multi-factor authentication enabled.
     results = []
     for user in config.get("iam_users", []):
         passed = user.get("mfa_enabled", True)
@@ -38,6 +42,7 @@ def check_iam_mfa(config: dict) -> list[dict]:
 
 
 def check_sg_ssh_open(config: dict) -> list[dict]:
+    # Flag security groups exposing SSH to every IPv4 address on the internet.
     results = []
     for sg in config.get("security_groups", []):
         ssh_open = any(
@@ -50,6 +55,7 @@ def check_sg_ssh_open(config: dict) -> list[dict]:
 
 
 def check_cloudtrail_enabled(config: dict) -> list[dict]:
+    # Confirm that each CloudTrail trail is actively recording events.
     results = []
     for trail in config.get("cloudtrails", []):
         passed = trail.get("is_logging", False)
@@ -58,7 +64,7 @@ def check_cloudtrail_enabled(config: dict) -> list[dict]:
     return results
 
 
-# Registry: maps the name used in controls.yaml to the actual function.
+# Registry: maps names from controls.yaml to the deliberately allowed functions.
 CHECK_REGISTRY = {
     func.__name__: func
     for func in (

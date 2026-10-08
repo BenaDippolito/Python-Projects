@@ -1,5 +1,8 @@
+# Local virtual environment and Python bytecode.
 .venv/
 __pycache__/
+
+# Local environment secrets and generated test caches.
 .env
 *.pyc
 output/

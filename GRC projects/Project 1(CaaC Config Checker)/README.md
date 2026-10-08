@@ -1,3 +1,4 @@
+<!-- Project overview and usage documentation. -->
 # GRC Compliance-as-Code Configuration Checker
 
 A compliance-as-code tool that tests cloud configurations against
@@ -6,12 +7,14 @@ audit-ready JSON and CSV reports.
 
 ![Demo](docs_demo.png)
 
+<!-- Explain the compliance problem this project automates. -->
 ## The Problem
 Manual configuration reviews are slow, inconsistent, and hard to
 reproduce. This tool encodes control requirements as data and tests them
 automatically, so every run is identical and every result is traceable
 to a control, a framework requirement, and a specific failing resource.
 
+<!-- Summarize the tool's input, evaluation, and reporting pipeline. -->
 ## What It Does
 - Loads control definitions from `controls/controls.yaml` (policy as data)
 - Runs one check function per control against a configuration snapshot
@@ -19,6 +22,7 @@ to a control, a framework requirement, and a specific failing resource.
 - Exports a timestamped JSON record and an auditor-friendly CSV
 - Returns a non-zero exit code on failure, so CI pipelines can gate on it
 
+<!-- List the controls currently represented in the policy file. -->
 ## Controls Covered
 | ID | Control | NIST 800-53 | Severity |
 |---|---|---|---|
@@ -31,6 +35,7 @@ to a control, a framework requirement, and a specific failing resource.
 Full mapping: [docs/control_mapping.md](docs/control_mapping.md)
 (CIS references are from CIS AWS Foundations Benchmark v8.1)
 
+<!-- Document security, auditability, and governance design choices. -->
 ## Design Decisions (GRC Perspective)
 - **Fail closed:** a missing attribute counts as a failure, because
   absence of evidence is not evidence of compliance.
@@ -44,6 +49,7 @@ Full mapping: [docs/control_mapping.md](docs/control_mapping.md)
 - **Untrusted input handling:** CSV output neutralizes spreadsheet
   formula injection from resource names.
 
+<!-- Commands for installing dependencies and running a scan. -->
 ## Quick Start
 ```bash
 git clone https://github.com/BenaDippolito>/GRC projects/
@@ -55,6 +61,7 @@ python main.py
 ```
 Reports are written to `output/`. A sample is in [`examples/`](examples/).
 
+<!-- Commands and scope for the automated test suite. -->
 ## Testing
 ```bash
 pytest --cov=checker --cov-report=term-missing
@@ -63,6 +70,7 @@ pytest --cov=checker --cov-report=term-missing
 status tests, a golden-file scan test, and a control-integrity test
 that verifies every YAML control maps to a real check.
 
+<!-- Map each project directory to its responsibility. -->
 ## Project Structure
 ```
 controls/    control definitions (YAML)
@@ -73,17 +81,20 @@ scripts/     documentation generators
 examples/    sample reports (mock data only)
 ```
 
+<!-- Repeatable workflow for extending the policy set. -->
 ## Adding a Control
 1. Add an entry to `controls/controls.yaml`
 2. Write a `check_*` function in `checker/checks.py` and add it to the registry
 3. Add tests, then run `python scripts/generate_mapping.py`
 
+<!-- Current implementation gaps that users should understand. -->
 ## Known Limitations
 - Runs against mock data; live AWS collection is not implemented yet
 - SSH check detects `0.0.0.0/0` only; IPv6 `::/0` is a documented gap
   (tracked as an `xfail` test)
 - Point-in-time snapshot, not continuous monitoring
 
+<!-- Planned future capabilities. -->
 ## Roadmap
 - Live AWS collection via `boto3` (read-only IAM role)
 - IPv6 detection

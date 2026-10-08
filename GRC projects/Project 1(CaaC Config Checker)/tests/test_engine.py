@@ -1,16 +1,20 @@
+# Test status classification, error isolation, and complete-scan behavior.
 from checker.engine import ComplianceEngine
 
 
 def make_control(check="check_iam_mfa"):
+    # Construct the smallest valid control definition for engine tests.
     return {"id": "T-001", "title": "Test control", "severity": "high",
             "nist_80053": "IA-2", "check": check}
 
 
 def run(config, check="check_iam_mfa"):
+    # Run one synthetic control and return its structured result.
     return ComplianceEngine([make_control(check)], config).run_all()[0]
 
 
 def test_pass_status():
+    # All checked resources compliant produces PASS.
     result = run({"iam_users": [{"username": "a", "mfa_enabled": True}]})
     assert result["status"] == "PASS"
     assert result["failures"] == []
@@ -18,6 +22,7 @@ def test_pass_status():
 
 
 def test_fail_status_lists_failing_resources():
+    # A mixed resource set produces FAIL with only failed resources listed.
     config = {"iam_users": [
         {"username": "a", "mfa_enabled": True},
         {"username": "b", "mfa_enabled": False},
@@ -28,10 +33,12 @@ def test_fail_status_lists_failing_resources():
 
 
 def test_not_applicable_when_no_resources():
+    # An empty scope is reported as N/A rather than an implicit pass.
     assert run({})["status"] == "N/A"
 
 
 def test_unknown_check_name_is_error_not_crash():
+    # Invalid registry references become explicit control errors.
     result = run({}, check="check_does_not_exist")
     assert result["status"] == "ERROR"
     assert "check_does_not_exist" in result["error"]
@@ -45,6 +52,7 @@ def test_check_that_raises_is_isolated_as_error():
 
 
 def test_one_error_does_not_stop_other_controls():
+    # One control error must not prevent later controls from running.
     controls = [make_control("check_does_not_exist"), make_control("check_iam_mfa")]
     config = {"iam_users": [{"username": "a", "mfa_enabled": True}]}
     statuses = [r["status"] for r in ComplianceEngine(controls, config).run_all()]
